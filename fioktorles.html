@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fiók törlése – Bylka</title>
+<meta name="description" content="A Bylka alkalmazás fiókjának és adatainak törlése." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+<main class="card">
+  <h1>Fiók és adatok törlése</h1>
+  <p class="sub">Bylka – blokk- és számlaolvasó (hu.blokkolvaso.app)</p>
+
+  <!-- 1. lépés: kérés -->
+  <section id="step-request">
+    <p>
+      Ezen az oldalon kérheted a Bylka alkalmazásban létrehozott fiókod és a hozzá
+      tartozó összes adat végleges törlését. Az alkalmazásban is van erre lehetőség:
+      <em>Beállítások → Fiók törlése</em>.
+    </p>
+
+    <h2>Mi törlődik?</h2>
+    <ul>
+      <li>a fiókod (e-mail-cím és a bejelentkezési adatok),</li>
+      <li>az összes elmentett blokk (bolt, összeg, tételek, dátum),</li>
+      <li>a feltöltött blokkfotók,</li>
+      <li>a havi beolvasási keret és a vásárlási jogosultság adatai,</li>
+      <li>a beállításaid.</li>
+    </ul>
+
+    <h2>Mi marad meg?</h2>
+    <p>
+      Semmilyen személyes adat nem marad meg. Anonimizált statisztikát sem gyűjtünk,
+      így ilyet nem is őrzünk. A törlés <strong>végleges</strong>, az adatok később
+      nem állíthatók vissza.
+    </p>
+
+    <div class="danger">
+      <strong>Figyelem:</strong> a törlés után ugyanezzel az e-mail-címmel új fiókot
+      kezdhetsz, de a korábbi blokkjaid nem jönnek vissza.
+    </div>
+
+    <label for="email">A fiókhoz tartozó e-mail-cím</label>
+    <input id="email" type="email" placeholder="pelda@email.hu" autocomplete="email" />
+    <button id="btn-request">Törlési link kérése</button>
+    <div id="msg-request" class="msg"></div>
+
+    <h2>Vagy jelentkezz be és töröld azonnal</h2>
+    <p style="font-size:13.5px">
+      Ez a leggyorsabb út: a Google-fiókoddal igazolod, hogy tiéd a fiók, és
+      rögtön törölheted – e-mailre várni sem kell.
+    </p>
+    <button id="btn-google" style="background:#fff;color:#0f172a">
+      Google-bejelentkezés és törlés
+    </button>
+
+    <footer>
+      A törlést a fiókhoz tartozó e-mail-címről kell megerősíteni – így senki más
+      nem tudja törölni a fiókodat. ·
+      <a href="privacy-hu.html">Adatkezelési nyilatkozat</a> ·
+      <a href="index.html">Nyitólap</a>
+    </footer>
+  </section>
+
+  <!-- 2. lépés: megerősítés (az e-mailben kapott linkről visszatérve) -->
+  <section id="step-confirm" class="hidden">
+    <div class="danger">
+      <strong>Utolsó lépés:</strong> az alábbi gomb megnyomásával a fiók és minden
+      adata véglegesen törlődik. Ez nem visszavonható.
+    </div>
+    <p id="confirm-email" style="font-size:13px;color:#94a3b8;"></p>
+    <button id="btn-confirm" class="danger-btn">Fiókom végleges törlése</button>
+    <div id="msg-confirm" class="msg"></div>
+  </section>
+
+  <!-- 3. lépés: kész -->
+  <section id="step-done" class="hidden">
+    <div id="msg-done" class="msg ok"></div>
+    <p style="margin-top:16px">
+      Ha meggondolnád magad, bármikor újra regisztrálhatsz ugyanezzel az
+      e-mail-címmel – üres fiókkal indulsz.
+    </p>
+  </section>
+</main>
+
+<script>
+  /**
+   * A törlést a Supabase `delete-account` edge function végzi. A publikus kulcs
+   * ide beírható, mert az nem titok (a kliens bundle-ben is benne van).
+   */
+  const SUPABASE_URL = 'https://owzrjuypgxkepnvplgbm.supabase.co';
+  const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_gnhct4wmfJ-RepPvzjFYqQ_8HANj8Nc';
+  const ENDPOINT = SUPABASE_URL + '/functions/v1/delete-account';
+
+  const $ = (id) => document.getElementById(id);
+
+  /** Egységes üzenetkijelzés. */
+  function show(el, text, kind) {
+    el.className = 'msg ' + kind;
+    el.textContent = text;
+  }
+
+  /** A végpont hívása (CORS-t a szerver engedélyezi ehhez az oldalhoz). */
+  async function callApi(payload) {
+    const res = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    let body = null;
+    try { body = await res.json(); } catch { /* nem JSON */ }
+    return { status: res.status, body: body || {} };
+  }
+
+  // --- 1. lépés: törlési link kérése ---------------------------------------
+  $('btn-request').addEventListener('click', async () => {
+    const email = $('email').value.trim();
+    const msg = $('msg-request');
+    if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+      show(msg, 'Adj meg egy érvényes e-mail-címet.', 'err');
+      return;
+    }
+
+    $('btn-request').disabled = true;
+    show(msg, 'Küldés…', 'info');
+    try {
+      const { status, body } = await callApi({ action: 'request', email });
+      if (status !== 200) {
+        show(msg, 'Nem sikerült a kérés. Próbáld újra később.', 'err');
+        return;
+      }
+      if (body.emailSent === false) {
+        // Ilyenkor a szerver nem tudta kiküldeni a levelet (nincs beállított
+        // e-mail-küldő). Ne ígérjünk olyat, ami nem történt meg.
+        show(
+          msg,
+          'A levelet most nem sikerült kiküldeni. Használd inkább a lenti ' +
+            'Google-bejelentkezést (azzal azonnal törölhető a fiók), vagy írj ' +
+            'a racskobalazs@gmail.com címre, és 30 napon belül töröljük az adataidat.',
+          'err'
+        );
+        return;
+      }
+      show(
+        msg,
+        'Elküldtük a megerősítő levelet erre a címre: ' + email +
+          '. Nyisd meg a levélben lévő linket, és ott erősítsd meg a törlést. ' +
+          '(Ha nem találod, nézd meg a spam mappát is.)',
+        'ok'
+      );
+    } catch (err) {
+      show(msg, 'Hálózati hiba. Ellenőrizd a kapcsolatot, és próbáld újra.', 'err');
+    } finally {
+      $('btn-request').disabled = false;
+    }
+  });
+
+  // --- 2. lépés: az e-mailben kapott linkről visszatérve -------------------
+  // Háromféle linket tudunk kezelni:
+  //  A) ?token_hash=...   (a saját levelünk, Resend-del küldve)
+  //  B) #access_token=... (a Supabase beépített e-mail-sablonjából)
+  //  C) #access_token=... (Google-bejelentkezésből visszatérve)
+  const params = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const tokenHash = params.get('token_hash');
+  const accessToken = hashParams.get('access_token');
+  const emailFromLink = params.get('email') || '';
+
+  // Google-bejelentkezés: a Supabase OAuth végpontjára küldjük a felhasználót,
+  // és ide tér vissza a tokennel.
+  const returnUrl = window.location.origin + window.location.pathname;
+  $('btn-google').addEventListener('click', () => {
+    window.location.href =
+      SUPABASE_URL +
+      '/auth/v1/authorize?provider=google&redirect_to=' +
+      encodeURIComponent(returnUrl);
+  });
+
+  if (tokenHash || accessToken) {
+    $('step-request').classList.add('hidden');
+    $('step-confirm').classList.remove('hidden');
+
+    /** Kiírja, melyik fiókról van szó (Google-útnál a tokenből kérdezzük le). */
+    async function showAccount() {
+      if (emailFromLink) {
+        $('confirm-email').textContent = 'Érintett fiók: ' + emailFromLink;
+        return;
+      }
+      if (!accessToken) return;
+      try {
+        const res = await fetch(SUPABASE_URL + '/auth/v1/user', {
+          headers: { apikey: SUPABASE_PUBLISHABLE_KEY, Authorization: 'Bearer ' + accessToken },
+        });
+        const user = await res.json();
+        if (user?.email) $('confirm-email').textContent = 'Érintett fiók: ' + user.email;
+      } catch {
+        /* ha nem sikerül, marad az általános szöveg */
+      }
+    }
+    showAccount();
+
+    $('btn-confirm').addEventListener('click', async () => {
+      const msg = $('msg-confirm');
+      $('btn-confirm').disabled = true;
+      show(msg, 'Törlés folyamatban…', 'info');
+      try {
+        const { status, body } = await callApi({
+          action: 'confirm',
+          email: emailFromLink,
+          tokenHash: tokenHash || undefined,
+          accessToken: accessToken || undefined,
+        });
+        if (status === 200 && body.ok) {
+          $('step-confirm').classList.add('hidden');
+          $('step-done').classList.remove('hidden');
+          show(
+            $('msg-done'),
+            body.deleted === false
+              ? 'Ehhez a címhez nem tartozik aktív fiók, így nem volt mit törölni.'
+              : 'A fiók és minden hozzá tartozó adat törölve.',
+            'ok'
+          );
+          // A tokent kivesszük az URL-ből, hogy visszalépéskor ne fusson újra.
+          window.history.replaceState({}, '', window.location.pathname);
+        } else if (status === 403) {
+          show(msg, 'A link érvénytelen vagy már felhasználták. Kérj újat az elejéről.', 'err');
+          $('btn-confirm').disabled = false;
+        } else {
+          show(msg, 'A törlés nem sikerült. Próbáld újra később.', 'err');
+          $('btn-confirm').disabled = false;
+        }
+      } catch (err) {
+        show(msg, 'Hálózati hiba. Próbáld újra.', 'err');
+        $('btn-confirm').disabled = false;
+      }
+    });
+  }
+</script>
+</body>
+</html>

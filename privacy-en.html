@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Privacy Policy – Bylka</title>
+<meta name="description" content="Privacy policy of the Bylka receipt scanning app." />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+<main class="card">
+  <h1>Privacy Policy</h1>
+  <p class="sub">Bylka – receipt scanning app (<code>hu.blokkolvaso.app</code>) · Effective from 15 September 2026</p>
+
+  <p>
+    This policy explains what data the Bylka app (the “App”) processes, why, for
+    how long, and what rights you have. It is written in line with the GDPR
+    (EU Regulation 2016/679).
+  </p>
+
+  <h2>1. Who is the controller?</h2>
+  <table>
+    <tr><th>Controller</th><td>Balázs Racskó (individual developer)</td></tr>
+    <tr><th>Contact</th><td><a href="mailto:racskobalazs@gmail.com">racskobalazs@gmail.com</a></td></tr>
+    <tr><th>Country</th><td>Hungary</td></tr>
+  </table>
+  <div class="note">
+    For any privacy question, access request or complaint, write to the address
+    above. We reply within <strong>30 days</strong> at the latest.
+  </div>
+
+  <h2>2. What data do we process?</h2>
+
+  <h3>2.1. Using the app without signing in (guest mode)</h3>
+  <p>
+    Without signing in, your data is stored <strong>only on your own device</strong>
+    (local storage of the browser/app). We do not upload your receipts to the
+    cloud and we do not know who you are.
+  </p>
+  <p>
+    The one exception is <strong>AI recognition</strong>: the photographed
+    receipt is forwarded through our server to the Google Gemini service so the
+    text on the image can be converted into structured data (see section 3). The
+    image is not retained by us after processing unless you are signed in.
+  </p>
+  <p>
+    To prevent abuse, the server counts requests tied to your
+    <strong>IP address</strong> (daily/monthly allowance). This data alone does
+    not identify you, and it is deleted once the allowance period expires.
+  </p>
+
+  <h3>2.2. When you sign in (account)</h3>
+  <table>
+    <tr><th>Data</th><td>Source · Purpose</td></tr>
+    <tr>
+      <th>Email address</th>
+      <td>provided by you (email sign-up) or by Google (Google sign-in) · to identify your account and sync receipts across your devices</td>
+    </tr>
+    <tr>
+      <th>Name, profile picture URL</th>
+      <td>from Google when you sign in with Google · only to display it in the interface</td>
+    </tr>
+    <tr>
+      <th>Receipt data</th>
+      <td>merchant name, address, tax number, date, payment method, total, line items, categories · so that they are available on all your devices</td>
+    </tr>
+    <tr>
+      <th>Receipt photos</th>
+      <td>the image taken at scan time · stored with the receipt so you can look at it later</td>
+    </tr>
+    <tr>
+      <th>Allowance and entitlement</th>
+      <td>number of scans and whether you purchased ad removal · to calculate your allowance and validate your purchase</td>
+    </tr>
+  </table>
+
+  <h3>2.3. Advertising</h3>
+  <p>
+    The App may contain ads. When ads are shown, Google AdMob processes your
+    device’s <strong>advertising ID</strong> and the technical data required to
+    serve the ad. Google’s own privacy policy governs this, and you can reset or
+    delete the advertising ID in your phone settings at any time.
+  </p>
+  <p>
+    If you purchase the ad-free version, no ads are shown and no advertising data
+    is processed.
+  </p>
+
+  <h3>2.4. Purchases</h3>
+  <p>
+    Payments are handled by <strong>Google Play</strong>. We <strong>never see or
+    store your card details</strong>; we only learn whether the purchase
+    succeeded. Purchase records are kept by Google and by our entitlement
+    service (RevenueCat).
+  </p>
+
+  <h2>3. Who do we share data with?</h2>
+  <p>
+    We share data only with the providers below, to the extent necessary for the
+    App to work. <strong>We do not sell data and we do not use it for
+    advertising profiling.</strong>
+  </p>
+  <table>
+    <tr><th>Provider</th><th>What it receives</th><th>Why</th></tr>
+    <tr>
+      <td><strong>Supabase</strong> (database and authentication, EU region)</td>
+      <td>email address, receipt data, receipt photos, allowance, entitlement</td>
+      <td>account, sign-in and cross-device sync</td>
+    </tr>
+    <tr>
+      <td><strong>Google Gemini API</strong> (AI recognition)</td>
+      <td>the photographed receipt</td>
+      <td>reading and structuring the text on the receipt</td>
+    </tr>
+    <tr>
+      <td><strong>Google AdMob</strong> (only when ads are shown)</td>
+      <td>advertising ID, technical data</td>
+      <td>serving ads</td>
+    </tr>
+    <tr>
+      <td><strong>Google Play</strong> and <strong>RevenueCat</strong></td>
+      <td>purchase identifier, entitlement</td>
+      <td>processing and validating the purchase</td>
+    </tr>
+  </table>
+  <div class="note">
+    <strong>About receipt photos:</strong> a receipt is a payment document, so it
+    may show the last digits of your card, your name and your purchases. The
+    photo is sent to Google’s servers for AI recognition and – if you are signed
+    in – it is also stored in your own account so you can look at it later.
+    Please only scan receipts you are comfortable with.
+  </div>
+
+  <h2>4. Legal bases</h2>
+  <ul>
+    <li><strong>Performance of a contract</strong> (GDPR Art. 6(1)(b)): the account, the sync and the purchase are needed for the App to work.</li>
+    <li><strong>Consent</strong> (Art. 6(1)(a)): moving from guest mode to an account, and processing the advertising ID when ads are shown.</li>
+    <li><strong>Legitimate interest</strong> (Art. 6(1)(f)): preventing abuse and exhaustion of the service (IP-based allowance), and debugging.</li>
+  </ul>
+
+  <h2>5. Retention</h2>
+  <ul>
+    <li><strong>Account data and receipts:</strong> as long as your account exists. If you request deletion, they are deleted immediately and permanently.</li>
+    <li><strong>Receipt photos:</strong> with the account, until the account is deleted.</li>
+    <li><strong>IP-based AI allowance:</strong> until the daily/monthly period expires, then deleted.</li>
+    <li><strong>Purchase records:</strong> under Google’s and RevenueCat’s own rules (which may be longer due to accounting obligations).</li>
+  </ul>
+
+  <h2>6. Your rights</h2>
+  <p>You can exercise the following rights at any time via the contact address in section 1:</p>
+  <ul>
+    <li><strong>Access:</strong> request information about the data we process about you.</li>
+    <li><strong>Rectification:</strong> request correction of inaccurate data (you can also edit receipts yourself in the App).</li>
+    <li><strong>Erasure:</strong> request deletion of your account and all data. You can do this instantly in the App under <em>Settings → Delete account</em>, or by email on the <a href="fioktorles.html">account deletion page</a>.</li>
+    <li><strong>Portability:</strong> export your receipts in a machine-readable format (JSON) using the App’s export feature.</li>
+    <li><strong>Objection and restriction:</strong> request restriction of processing or object to processing based on legitimate interest.</li>
+    <li><strong>Complaint:</strong> you may lodge a complaint with the Hungarian supervisory authority (NAIH, <a href="https://naih.hu" target="_blank" rel="noopener">naih.hu</a>) or with the authority in your country of residence.</li>
+  </ul>
+
+  <h2>7. Cookies and local storage</h2>
+  <p>
+    The App does not use tracking cookies. The settings needed for operation
+    (such as the selected language, theme and the guest allowance counter) are
+    kept in your device’s local storage; they disappear when you leave the App
+    or clear its data.
+  </p>
+
+  <h2>8. Children</h2>
+  <p>
+    The App is not intended for children under 16, and we do not knowingly
+    collect data from them. If we become aware of such data, we delete it.
+  </p>
+
+  <h2>9. Security</h2>
+  <p>
+    Data is transmitted over an encrypted connection (HTTPS). Your account data
+    can only be accessed with your own sign-in (protected by row-level security
+    on the server), and receipt photos are accessible only in your own folder.
+  </p>
+
+  <h2>10. Changes to this policy</h2>
+  <p>
+    If this policy changes materially, we indicate the change in the App and on
+    this page, updating the date above.
+  </p>
+
+  <footer>
+    Bylka · <a href="index.html">Home</a> · <a href="fioktorles.html">Delete account</a> ·
+    <a href="privacy-hu.html">Magyar változat</a>
+  </footer>
+</main>
+</div>
+</body>
+</html>
